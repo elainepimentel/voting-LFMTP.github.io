@@ -7,55 +7,81 @@
       color: red;
       font-weight: bold;
     }
-  </style>
-  <script>
-    function validateForm() {
-      var scSelected = false;
-      var pcSelected = 0;
-      var scCandidate = '';
-      var pcCandidates = [];
 
-      var scCandidates = document.getElementsByName('scCandidate');
-      for (var i = 0; i < scCandidates.length; i++) {
-        if (scCandidates[i].checked) {
-          scSelected = true;
-          scCandidate = scCandidates[i].value;
-          break;
-        }
-      }
-
-      var pcCandidates = document.getElementsByName('pcCandidate');
-      for (var i = 0; i < pcCandidates.length; i++) {
-        if (pcCandidates[i].checked) {
-          pcSelected++;
-          pcCandidates.push(pcCandidates[i].value);
-        }
-      }
-
-      if (!scSelected || pcSelected === 0) {
-        document.getElementById('error').innerHTML = 'Please select a candidate in each category.';
-        return false;
-      }
-
-      if (pcSelected > 2) {
-        document.getElementById('error').innerHTML = 'You can vote for at most two candidates in the PC category.';
-        return false;
-      }
-
-      // Save the voting data to CSV
-      var data = 'Category,Selected Candidate\n';
-      data += 'SC,' + scCandidate + '\n';
-      for (var i = 0; i < pcCandidates.length; i++) {
-        data += 'PC,' + pcCandidates[i] + '\n';
-      }
-
-      var link = document.createElement('a');
-      link.href = 'data:text/csv;charset=utf-8,' + encodeURI(data);
-      link.download = 'voting_results.csv';
-      link.click();
-
-      return true;
+    .success {
+      color: green;
+      font-weight: bold;
     }
+  </style>
+  <script src="https://cdn.emailjs.com/sdk/2.6.4/email.min.js"></script>
+  <script>
+    (function() {
+      emailjs.init('YOUR_USER_ID'); // Replace with your own User ID from EmailJS
+
+      function validateForm() {
+        var scSelected = false;
+        var pcSelected = 0;
+        var scCandidate = '';
+        var pcCandidates = [];
+
+        var scCandidates = document.getElementsByName('scCandidate');
+        for (var i = 0; i < scCandidates.length; i++) {
+          if (scCandidates[i].checked) {
+            scSelected = true;
+            scCandidate = scCandidates[i].value;
+            break;
+          }
+        }
+
+        var pcCandidates = document.getElementsByName('pcCandidate');
+        for (var i = 0; i < pcCandidates.length; i++) {
+          if (pcCandidates[i].checked) {
+            pcSelected++;
+            pcCandidates.push(pcCandidates[i].value);
+          }
+        }
+
+        if (!scSelected || pcSelected === 0) {
+          showError('Please select a candidate in each category.');
+          return false;
+        }
+
+        if (pcSelected > 2) {
+          showError('You can vote for at most two candidates in the PC category.');
+          return false;
+        }
+
+        // Prepare the voting data
+        var votingData = {
+          scCategory: 'SC',
+          scCandidate: scCandidate,
+          pcCategory: 'PC',
+          pcCandidates: pcCandidates.join(', ')
+        };
+
+        // Send the voting results via email
+        emailjs.send('YOUR_SERVICE_ID', 'voting_template', votingData)
+          .then(function(response) {
+            showSuccess('Thank you for voting! The results have been emailed to elaine.pimentel@gmail.com.');
+          }, function(error) {
+            showError('An error occurred while sending the voting results. Please try again later.');
+          });
+
+        return false;
+      }
+
+      function showError(message) {
+        var errorElement = document.getElementById('error');
+        errorElement.innerHTML = message;
+        errorElement.style.display = 'block';
+      }
+
+      function showSuccess(message) {
+        var successElement = document.getElementById('success');
+        successElement.innerHTML = message;
+        successElement.style.display = 'block';
+      }
+    })();
   </script>
 </head>
 <body>
@@ -63,7 +89,7 @@
 
   <form onsubmit="return validateForm()">
     <h2>Category: Steering Committee</h2>
-    <p>Please vote in at most one candidate</p> 
+    <p>Please select at most 1 member</p>
     <input type="radio" name="scCandidate" value="Sandra Alves"> Sandra Alves<br>
     <input type="radio" name="scCandidate" value="Roberto Blanco"> Roberto Blanco<br>
     <input type="radio" name="scCandidate" value="Frédéric Blanqui"> Frédéric Blanqui<br>
@@ -75,8 +101,8 @@
     <input type="radio" name="scCandidate" value="Nora Szasz"> Nora Szasz<br>
     <input type="radio" name="scCandidate" value="" checked> No Vote<br>
 
-    <h2>Category: PC-chair LFMTP2024</h2>
-    <p>Please vote in at most two candidates</p> 
+    <h2>Category: PC-chairs LFMTP2024</h2>
+    <p>Please select at most 2 names</p>
     <input type="checkbox" name="pcCandidate" value="Andreas Abe"> Andreas Abe<br>
     <input type="checkbox" name="pcCandidate" value="Claudio Sacerdoti Coen"> Claudio Sacerdoti Coen<br>
     <input type="checkbox" name="pcCandidate" value="Florian Rabe"> Florian Rabe<br>
@@ -88,6 +114,7 @@
     <input type="submit" value="Submit Vote">
   </form>
 
-  <p id="error" class="error"></p>
+  <p id="error" class="error" style="display: none;"></p>
+  <p id="success" class="success" style="display: none;"></p>
 </body>
 </html>
