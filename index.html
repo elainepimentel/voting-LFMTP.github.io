@@ -16,7 +16,7 @@
   <script src="https://cdn.emailjs.com/sdk/2.6.4/email.min.js"></script>
   <script>
     (function() {
-      emailjs.init('YOUR_USER_ID'); // Replace with your own User ID from EmailJS
+      emailjs.init('Elaine Pimentel'); // Replace with your own User ID from EmailJS
 
       function validateForm() {
         var scSelected = false;
@@ -60,9 +60,9 @@
         };
 
         // Send the voting results via email
-        emailjs.send('YOUR_SERVICE_ID', 'voting_template', votingData)
+        emailjs.send('Elaine Pimentel', 'voting_template', votingData)
           .then(function(response) {
-            showSuccess('Thank you for voting! The results have been emailed to elaine.pimentel@gmail.com.');
+            showSuccess('Thank you for voting!');
           }, function(error) {
             showError('An error occurred while sending the voting results. Please try again later.');
           });
