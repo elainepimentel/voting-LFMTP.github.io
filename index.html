@@ -16,7 +16,7 @@
   <script src="https://cdn.emailjs.com/sdk/2.6.4/email.min.js"></script>
   <script>
     (function() {
-      emailjs.init('uTQFUT_If4z2FcWi9'); // Replace with your own User ID from EmailJS
+      emailjs.init('service_9r83du8'); // Replace with your own User ID from EmailJS
 
       function validateForm() {
         var scSelected = false;
@@ -60,7 +60,7 @@
         };
 
         // Send the voting results via email
-        emailjs.send('uTQFUT_If4z2FcWi9', 'voting_template', votingData)
+        emailjs.send('service_9r83du8', 'voting_template', votingData)
           .then(function(response) {
             showSuccess('Thank you for voting!');
           }, function(error) {
