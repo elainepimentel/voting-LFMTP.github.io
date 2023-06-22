@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>LFMTP -- Voting Page</title>
+  <style>
+    .error {
+      color: red;
+      font-weight: bold;
+    }
+  </style>
+  <script>
+    function validateForm() {
+      var scSelected = false;
+      var pcSelected = false;
+      var scCandidate = '';
+      var pcCandidate = '';
+
+      var scCandidates = document.getElementsByName('scCandidate');
+      for (var i = 0; i < scCandidates.length; i++) {
+        if (scCandidates[i].checked) {
+          scSelected = true;
+          scCandidate = scCandidates[i].value;
+          break;
+        }
+      }
+
+      var pcCandidates = document.getElementsByName('pcCandidate');
+      for (var i = 0; i < pcCandidates.length; i++) {
+        if (pcCandidates[i].checked) {
+          pcSelected = true;
+          pcCandidate = pcCandidates[i].value;
+          break;
+        }
+      }
+
+      // Save the voting data to CSV
+      var data = 'Category,Selected Candidate\n';
+      if (scSelected) {
+        data += 'SC,' + scCandidate + '\n';
+      }
+      if (pcSelected) {
+        data += 'PC,' + pcCandidate + '\n';
+      }
+
+      if (!scSelected && !pcSelected) {
+        document.getElementById('error').innerHTML = 'Please choose at least one category to vote.';
+        return false;
+      }
+
+      var link = document.createElement('a');
+      link.href = 'data:text/csv;charset=utf-8,' + encodeURI(data);
+      link.download = 'voting_results.csv';
+      link.click();
+
+      return true;
+    }
+  </script>
+</head>
+<body>
+  <h1>Voting Page</h1>
+
+  <form onsubmit="return validateForm()">
+    <h2>Category: Steering Committee</h2>
+    <p>Please vote in at most one candidate</p>
+    <input type="radio" name="scCandidate" value="Sandra Alves"> Sandra Alves<br>
+    <input type="radio" name="scCandidate" value="Roberto Blanco"> Roberto Blanco<br>
+    <input type="radio" name="scCandidate" value="Frederic Blanqui"> Frederic Blanqui<br>
+    <input type="radio" name="scCandidate" value="Alberto Ciaffaglione"> Alberto Ciaffaglione<br>
+    <input type="radio" name="scCandidate" value="Gilles Dowek"> Gilles Dowek<br>
+    <input type="radio" name="scCandidate" value="Carlos Olarte"> Carlos Olarte<br>
+    <input type="radio" name="scCandidate" value="Enrico Tassi"> Enrico Tassi<br>
+    <input type="radio" name="scCandidate" value="Aaron Stump"> Aaron Stump<br>
+    <input type="radio" name="scCandidate" value="Nora Szasz"> Nora Szasz<br>
+    <input type="radio" name="scCandidate" value="" checked> No Vote<br>
+
+    <h2>Category: LFMTP 2024 PC-chair</h2>
+    <p>Please vote in at most one candidate</p>
+    <input type="radio" name="pcCandidate" value="Andreas Abe"> Andreas Abe<br>
+    <input type="radio" name="pcCandidate" value="Claudio Sacerdoti Coen"> Claudio Sacerdoti Coen<br>
+    <input type="radio" name="pcCandidate" value="Florian Rabe"> Florian Rabe<br>
+    <input type="radio" name="pcCandidate" value="Aaron Stump"> Aaron Stump<br>
+    <input type="radio" name="pcCandidate" value="Nora Szasz"> Nora Szasz<br>
+    <input type="radio" name="pcCandidate" value="" checked> No Vote<br>
+
+    <br>
+    <input type="submit" value="Submit Vote">
+  </form>
+
+  <p id="error" class="error"></p>
+</body>
+</html>
